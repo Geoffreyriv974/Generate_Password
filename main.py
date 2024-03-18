@@ -1,106 +1,94 @@
 import tkinter as tk
 import random
 import verif
+import clipboard
 
 
 def main():
+    specialChar = "!@#$%^&*()_+-={}[|;:<>,./?~"
+    letter = "AaBbCcDdEeFfFgGhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxZz"
+    number = "1234567890"
+
+    def getLongueur():
+        return longueur.get()
+
+    def getVar_carac():
+        return var_caractere.get()
+
+    def getVar_chiffres():
+        return var_chiffres.get()
+
+    def getVar_lettres():
+        return var_lettres.get()
+
+    def copy_password():
+        clipboard.copy(passwordLabel.cget("text"))
+
+    def OpenVerif():
+        verif.windows_verif()
+
+    def generatePassword():
+        FinalList = ''
+        password = []
+        if getVar_carac() == 1:
+            FinalList += specialChar
+        if getVar_chiffres() == 1:
+            FinalList += number
+        if getVar_lettres() == 1:
+            FinalList += letter
+        for i in range(getLongueur()):
+            index = random.randint(0, len(FinalList)-1)
+            password.append(FinalList[index])
+        passwordLabel.config(text="".join(password))
+        btnCopy.config(state=tk.NORMAL)
+        BtnVerifPassword = tk.Button(WindowsPassword, text="Verification", bg="lightgray", command=OpenVerif)
+        BtnVerifPassword.pack(pady=20)
+
     root = tk.Tk()
-    root.title("password generator")
-    root.geometry("1000x500")
+    root.title("password verification")
+    root.geometry("1000x540")
     root.resizable(height=False, width=False)
+    root.config(background="lightgray")
 
-    len_password = 0
-    tab_password = []
+    longueur = tk.IntVar()
+    var_caractere = tk.IntVar()
+    var_lettres = tk.IntVar()
+    var_chiffres = tk.IntVar()
 
-    name_windows = tk.Label(root, background="gray", foreground="white", text="password generator",
-                            font=("Arial", 20, 'bold'), width=120, border=2, relief=tk.RAISED, borderwidth=5, height=2)
-    name_windows.pack()
+    NameWindows = tk.Frame(root, bg="lightgray", relief="raised", borderwidth=5)
+    NameWindows.pack(fill="both")
+    LabelNameWindows = tk.Label(NameWindows, text="PassGenerator", bg="lightgray", font=('arial', 20, 'bold'))
+    LabelNameWindows.pack(side="left", padx=10)
 
-    windows_Frame = tk.Frame(root, bg="gray", relief=tk.SUNKEN, border=2, borderwidth=5)
-    windows_Frame.pack()
+    WindowsPassword = tk.Frame(root, bg="lightgray", relief="sunken", borderwidth=5)
+    WindowsPassword.pack(fill="both")
 
-    generate_name = tk.Label(windows_Frame, text="Generate", font=("Arial", 18, 'bold'), background="gray",
-                             foreground="white", width=120)
-    generate_name.pack()
+    LabelTypePassword = tk.Label(WindowsPassword, text="Generation", bg="lightgray", font=('Arial', 15, 'bold'))
+    LabelTypePassword.pack()
 
-    def update_label():
-        input_length.config(text=len_password)
-        password.config(text="".join(tab_password))
+    BtnCaractSpe = tk.Checkbutton(WindowsPassword, text='Caractéres spéciaux', variable=var_caractere, command=getVar_carac,  bg="lightgray")
+    BtnCaractSpe.pack()
+    BtnLetter = tk.Checkbutton(WindowsPassword, text='Lettres majuscules et minuscules', variable=var_lettres, command=getVar_lettres,  bg="lightgray")
+    BtnLetter.pack()
+    BtnNumber = tk.Checkbutton(WindowsPassword, text='Chiffres', variable=var_chiffres, command=getVar_chiffres,  bg="lightgray")
+    BtnNumber.pack()
 
-    def click_on_btn_spe():
-        nonlocal len_password
-        len_password = len_password + 1
+    FrameLenghtPassword = tk.Label(WindowsPassword, bg="lightgray")
+    FrameLenghtPassword.pack(pady=20)
 
-        tab_spe = "!@#$%^&*()_+-={}[|;:'\<>,./?~"
+    labelLenghtPassword = tk.Label(FrameLenghtPassword, text='Longueur du mot de passe : ',  bg="lightgray")
+    labelLenghtPassword.pack()
+    lenghtScale = tk.Scale(FrameLenghtPassword, from_=1, to=50, length=200, variable=longueur, orient=tk.HORIZONTAL,  bg="lightgray")
+    lenghtScale.pack()
 
-        spe_random = random.choice(tab_spe)
-        tab_password.append(spe_random)
+    passwordLabel = tk.Label(WindowsPassword, font=("Arial", 15), width=5, text='')
+    passwordLabel.pack(ipadx=300, ipady=10, padx=50, pady=10)
 
-        update_label()
+    btnCopy = tk.Button(WindowsPassword, text='Copier dans le press papier', command=copy_password,  bg="lightgray", state=tk.DISABLED)
+    btnCopy.pack(pady=20)
 
-    def click_on_btn_maj_min():
-        nonlocal len_password
-        len_password = len_password + 1
-
-        tab_min_maj = "AZERTYUIOPMLKJHGFDSQWXCVBN"
-
-        if random.choice([True, False]):
-            tab_min_maj = tab_min_maj.lower()
-        else:
-            tab_min_maj = tab_min_maj.upper()
-
-        min_maj_random = random.choice(tab_min_maj)
-        tab_password.append(min_maj_random)
-
-        update_label()
-
-    def click_on_btn_number():
-        nonlocal len_password
-        len_password = len_password + 1
-
-        tab_number = "1234567890"
-
-        number_random = random.choice(tab_number)
-        tab_password.append(number_random)
-
-        update_label()
-
-    frame_1 = tk.Frame(windows_Frame, bg="gray")
-    frame_1.pack()
-    btn_spe = tk.Button(frame_1, text="X", font=("Arial", 15), borderwidth=5, relief=tk.RAISED, fg="white", bg="gray",
-                        command=click_on_btn_spe)
-    btn_spe.pack(side="left")
-    text_spe = tk.Label(frame_1, text="Caractères spéciaux", bg='gray', foreground="white", font=("Arial", 15))
-    text_spe.pack(side="left")
-
-    frame_2 = tk.Frame(windows_Frame, bg="gray")
-    frame_2.pack()
-    btn_maj_min = tk.Button(frame_2, text="X", font=("Arial", 15), borderwidth=5, relief=tk.RAISED, fg="white",
-                            background="gray", command=click_on_btn_maj_min)
-    btn_maj_min.pack(side="left")
-    text_maj_min = tk.Label(frame_2, text="Majuscule ou minusule", bg='gray', foreground="white", font=("Arial", 15))
-    text_maj_min.pack(side="left")
-
-    frame_3 = tk.Frame(windows_Frame, bg="gray")
-    frame_3.pack()
-    btn_number = tk.Button(frame_3, text="X", font=("Arial", 15), borderwidth=5, relief=tk.RAISED, fg="white",
-                           background="gray", command=click_on_btn_number)
-    btn_number.pack(side="left")
-    text_number = tk.Label(frame_3, text="Chiffre", bg='gray', foreground="white", font=("Arial", 15))
-    text_number.pack(side="left")
-
-    frame_4 = tk.Frame(windows_Frame, bg="gray")
-    frame_4.pack()
-    text_length = tk.Label(frame_4, text="Longueur mot de passe :", font=("Arial", 15), fg="white", bg="gray")
-    text_length.pack(side="left")
-    input_length = tk.Label(frame_4, font=("Arial", 10), width=10, text=len_password, borderwidth=5)
-    input_length.pack(side="left")
-
-    password = tk.Label(windows_Frame, font=("Arial", 15), width=10, borderwidth=5)
-    password.pack(ipadx=150, ipady=10, padx=50, pady=10)
-
-    btn_valid_password = tk.Button(windows_Frame, borderwidth=3, text="Valider", fg="white", bg="gray", font=("Arial", 15), command=verif.verif)
-    btn_valid_password.pack(pady=48)
+    BtnGenerate = tk.Button(WindowsPassword, text='Générer le mot de passe', command=generatePassword, bg="lightgray")
+    BtnGenerate.pack(pady=20)
 
     root.mainloop()
 
